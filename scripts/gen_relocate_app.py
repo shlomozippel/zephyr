@@ -382,11 +382,10 @@ def parse_args():
 # return the absolute path for the object file.
 def get_obj_filename(searchpath, filename):
     # get the object file name which is almost always pended with .obj
-    obj_filename = filename.split("/")[-1] + ".obj"
-
+    obj_filenames = [filename.split("/")[-1] + ext for ext in [".o", ".obj"]]
     for dirpath, _, files in os.walk(searchpath):
         for filename1 in files:
-            if filename1 == obj_filename:
+            if filename1 in obj_filenames:
                 if filename.split("/")[-2] in dirpath.split("/")[-1]:
                     fullname = os.path.join(dirpath, filename1)
                     return fullname
@@ -439,6 +438,7 @@ def main():
             obj_filename = get_obj_filename(searchpath, filename)
             # the obj file wasn't found. Probably not compiled.
             if not obj_filename:
+                print(f"*** Obj for {filename} not found")
                 continue
 
             full_list_of_sections = find_sections(obj_filename, full_list_of_sections)
